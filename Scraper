@@ -69,3 +69,21 @@ View(Final_Table)
 
 #Export as CSV
 write.csv(Final_Table,file='IMDB_Reviews.csv')
+
+
+
+IMDB.All <- lapply(paste0('http://www.imdb.com/title/tt', ID, '/reviews?filter=prolific', 1:10),
+                    function(url){
+                      url %>% read_html() %>% 
+                        html_nodes(".review-date,.rating-other-user-rating,.title,.show-more__control") %>% 
+                        html_text() %>%
+                        gsub('[\r\n\t]', '', .)
+                      
+                    })
+IMDB_Array <- unlist(IMDB.All)
+
+
+
+r.1<- as.data.frame(split(IMDB_Array, 1:4))
+
+
