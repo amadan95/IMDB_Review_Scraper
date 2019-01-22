@@ -58,7 +58,7 @@ Title <- unlist(Title)
 Stars <- unlist(Stars)
 Review <- unlist(Review)
 
-
+merge <- cbind(Date,Title,Stars,Review)
 
 
 #Covert to Data Frame
