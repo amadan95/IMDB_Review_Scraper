@@ -26,7 +26,7 @@ IMDB_Array <- unlist(IMDB.All)
 
 
 #Export as CSV
-write.csv(Final_Table,file='IMDB_Reviews.csv')
+write.csv(IMDB_Array ,file='IMDB_Reviews.csv')
 
 
 
