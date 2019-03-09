@@ -1,32 +1,29 @@
 library(rvest)
 library(dplyr)
 library(stringr)
+library(tidyverse)
+library(janitor)
 
+ID <- 4633694
 
-#Scraping function for 100 records per movie/program
+data <- lapply(paste0('http://www.imdb.com/title/tt', ID, '/reviews?filter=prolific', 1:100),
+                   function(url){
+                     url %>% read_html() %>% 
+                       html_nodes(".review-date,.rating-other-user-rating,.title,.show-more__control") %>% 
+                       html_text() %>%
+                       gsub('[\r\n\t]', '', .)
+                   })
 
-#Pulling Date, Rating, Title, and Review
+data.df <- data.frame(data)
+colnames(data.df)[1] <- 'col1'
 
-#insert ID from IMDB Movie/TV Show URL excluding tt                                   
+data.df %>% remove_empty("rows")
 
+text_data = gsub('\\b(\\d+/\\d+)\\b','\n\\1',paste(grep('\\w',data.df$col1,value = TRUE),collapse = ':')) 
+final <- read.csv(text=text_data,h=F,sep=":",strip.white = T,fill=T,stringsAsFactors = F)
 
-ID <- #######
-
-
-
-IMDB.All <- lapply(paste0('http://www.imdb.com/title/tt', ID, '/reviews?filter=prolific', 1:10),
-                    function(url){
-                      url %>% read_html() %>% 
-                        html_nodes(".review-date,.rating-other-user-rating,.title,.show-more__control") %>% 
-                        html_text() %>%
-                        gsub('[\r\n\t]', '', .)
-                      
-                    })
-IMDB_Array <- unlist(IMDB.All)
+names(data) <- c("Rating", "Title","Date","Review")
 
 
 #Export as CSV
-write.csv(IMDB_Array ,file='IMDB_Reviews.csv')
-
-
-
+write.csv(final ,file='IMDB_Reviews.csv')
